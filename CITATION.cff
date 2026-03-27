@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "barrnap-rna-toolkit"
+version: 1.0.0
+date-released: "2026-03-27"
+authors:
+  - family-names: "Leão"
+    given-names: "Pedro"
+repository-code: "https://github.com/Pedrolleao/barrnap-rna-toolkit"
+abstract: >
+  A suite of Python command-line tools for compiling, summarising, and
+  extracting RNA annotations produced by barrnap across collections of
+  Metagenome-Assembled Genomes (MAGs).
+keywords:
+  - bioinformatics
+  - barrnap
+  - rRNA
+  - tRNA
+  - metagenomics
+  - MAG
+  - archaea
+license: MIT
