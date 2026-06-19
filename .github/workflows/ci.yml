@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.10", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Syntax-check all scripts
+        run: python -m py_compile scripts/*.py
+
+      - name: Smoke test — verify CLIs are wired (--help)
+        run: |
+          python3 scripts/compile_barrnap.py --help
+          python3 scripts/extract_rrna_seqs.py --help
+          python3 scripts/run_barrnap_pipeline.py --help
+
+      - name: Smoke test — compile a minimal barrnap GFF fixture
+        run: |
+          mkdir -p gff_in
+          {
+            printf '##gff-version 3\n'
+            printf 'scaffold_1\tbarrnap:0.9\trRNA\t100\t1500\t1e-30\t+\t.\tName=16S_rRNA;product=16S ribosomal RNA;Alias=SSU_rRNA_archaea;Dbxref=Rfam:RF01959\n'
+            printf 'scaffold_1\tbarrnap:0.9\trRNA\t2000\t2120\t1e-20\t+\t.\tName=5S_rRNA;product=5S ribosomal RNA\n'
+            printf 'scaffold_2\taragorn\ttRNA\t50\t130\t.\t-\t.\tName=tRNA-Ala;product=transfer RNA (cgc)\n'
+          } > gff_in/MAG001.fna-barrnap.gff
+          python3 scripts/compile_barrnap.py gff_in --output-prefix ci_run --trna --rrna
+
+      - name: Assert expected output tables and content
+        run: |
+          test -s ci_run_table.tsv
+          test -s ci_run_rRNA_table.tsv
+          test -s ci_run_tRNA_table.tsv
+          grep -q "16S_rRNA" ci_run_rRNA_table.tsv && echo "PASS: 16S_rRNA in rRNA table"
+          grep -q "tRNA-Ala" ci_run_tRNA_table.tsv && echo "PASS: tRNA-Ala in tRNA table"

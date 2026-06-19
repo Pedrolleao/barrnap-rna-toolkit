@@ -2,6 +2,7 @@
 
 A suite of Python command-line tools for compiling, summarising, and extracting RNA annotations produced by **barrnap** across collections of MAGs (Metagenome-Assembled Genomes).
 
+[![CI](https://github.com/Pedrolleao/barrnap-rna-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/Pedrolleao/barrnap-rna-toolkit/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
